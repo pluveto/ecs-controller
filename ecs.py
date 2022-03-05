@@ -1,6 +1,7 @@
 """
 description:
     Stop Aliyun instance to save your money
+    
 requirements:
     pip install alibabacloud_ecs20140526==2.1.0
     pip install python-dotenv retry
@@ -54,7 +55,7 @@ class Server:
             print("instance is already stopped")
             return
         stop_instance_request = ecs_20140526_models.StopInstanceRequest(
-            instance_id=self.instance_id,stopped_mode="StopCharging"
+            instance_id=self.instance_id, stopped_mode="StopCharging"
         )
         retry.api.retry_call(self.client.stop_instance, fargs=[stop_instance_request],
                              tries=5, delay=30, backoff=2)
@@ -80,13 +81,13 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Usage: "+__file__+" [start|stop|reboot|status]")
         sys.exit(1)
+        
     action = sys.argv[1]
-    match(action):
-        case 'start':
-            server.start()
-        case 'stop':
-            server.stop()
-        case 'reboot':
-            server.reboot()
-        case 'status':
-            print("status of " + server.instance_id + ": " + server.status())
+    if action == 'start':
+        server.start()
+    elif action == 'stop':
+        server.stop()
+    elif action == 'reboot':
+        server.reboot()
+    elif action == 'status':
+        print("status of " + server.instance_id + ": " + server.status())
