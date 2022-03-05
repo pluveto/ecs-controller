@@ -45,6 +45,15 @@ class Server:
         self.instance_id = os.environ.get('ALIYUN_INSTANCE_ID')
 
     def start(self) -> None:
+        status = self.status()
+        if status == "Starting":
+            print("instance is starting")
+            return
+        
+        if status == "Running":
+            print("instance is already running")
+            return
+            
         start_instance_request = ecs_20140526_models.StartInstanceRequest(
             instance_id=self.instance_id
         )
