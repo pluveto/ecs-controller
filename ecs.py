@@ -51,9 +51,15 @@ class Server:
         self.client.start_instance(start_instance_request)
 
     def stop(self) -> None:
-        if self.status() == "Stopped":
+        status = self.status()
+        if status == "Stopped":
             print("instance is already stopped")
             return
+        
+        if status == "Stopping":
+            print("instance is stopping")
+            return
+        
         stop_instance_request = ecs_20140526_models.StopInstanceRequest(
             instance_id=self.instance_id, stopped_mode="StopCharging"
         )
@@ -81,7 +87,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Usage: "+__file__+" [start|stop|reboot|status]")
         sys.exit(1)
-        
+
     action = sys.argv[1]
     if action == 'start':
         server.start()
