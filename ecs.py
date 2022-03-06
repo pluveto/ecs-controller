@@ -43,6 +43,7 @@ class Server:
             endpoint=os.environ.get("ALIYUN_ENDPOINT"),
         ))
         self.instance_id = os.environ.get('ALIYUN_INSTANCE_ID')
+        self.status()
 
     def start(self) -> None:
         status = self.status()
@@ -53,7 +54,7 @@ class Server:
         if status == "Running":
             print("instance is already running")
             return
-            
+
         start_instance_request = ecs_20140526_models.StartInstanceRequest(
             instance_id=self.instance_id
         )
@@ -87,6 +88,8 @@ class Server:
         )
         response = self.client.describe_instance_attribute(
             describe_instance_attribute_request)
+        if len(response.body.public_ip_address.ip_address) > 0:
+            self.public_ip_address = response.body.public_ip_address.ip_address[0]
         return response.body.status
 
 
@@ -106,3 +109,5 @@ if __name__ == '__main__':
         server.reboot()
     elif action == 'status':
         print("status of " + server.instance_id + ": " + server.status())
+        if server.public_ip_address:
+            print("public ip address: " + server.public_ip_address)
